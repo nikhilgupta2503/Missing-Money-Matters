@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/Nikhil/Downloads/Ex_Files_SQL_EssT/Exercise Files/WSDA_Music.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="browser pragmas query structure" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="4026"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="2" parent="0"/><expanded_item id="5" parent="0"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="Artist" custom_title="0" dock_id="1" table="4,6:mainArtist"/><dock_state state="000000ff00000000fd00000001000000020000033b0000024efc0100000001fb000000160064006f0063006b00420072006f007700730065003101000000000000033b0000012400ffffff000002580000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="Album" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="56"/><column index="2" value="280"/><column index="3" value="53"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Artist" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="51"/><column index="2" value="179"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 4*">-- SELECT COUNT(*) AS &quot;NO. OF TRANSACTION&quot;
+-- FROM Invoice
+-- WHERE strftime('%Y', InvoiceDate) = '2011' OR strftime('%Y', InvoiceDate) = '2012'
+-- 
+-- 
+-- SELECT SUM(TOTAL) AS &quot;NO. OF TRANSACTION&quot;
+-- FROM Invoice
+-- WHERE strftime('%Y', InvoiceDate) = '2011' OR strftime('%Y', InvoiceDate) = '2012'
+-- 
+-- 
+-- SELECT C.FirstName,C.LastName,I.InvoiceDate,I.total FROM Customer C
+-- JOIN Invoice I ON I.CustomerId = C.CustomerId
+-- WHERE InvoiceDate &gt;= '2011-01-01' AND InvoiceDate &lt;= '2012-12-31'
+-- ORDER BY InvoiceDate
+-- 
+-- 
+-- SELECT
+-- c.FirstName AS [Customer FN],
+-- c.LastName AS [Customer LN],
+-- e.FirstName AS [Employee FN],
+-- e.LastName AS [Employee LN],
+-- i.total
+-- FROM
+-- Invoice i
+-- INNER JOIN
+-- Customer c
+-- ON i.CustomerId = c.CustomerId
+-- INNER JOIN
+-- Employee e
+-- ON e.EmployeeId = c.SupportRepId
+-- WHERE
+-- InvoiceDate &gt;= '2011-01-01' AND InvoiceDate &lt;='2012-12-31'
+-- ORDER BY
+-- i.total DESC
+-- 
+-- 
+-- 
+-- SELECT ROUND(AVG(Total),2) AS [Avg Transaction Amount] from Invoice
+-- WHERE InvoiceDate &gt;= '2011-01-01' AND InvoiceDate &lt;='2012-12-31'
+-- 
+-- 
+-- SELECT COUNT(*) AS [Num of Transactions Above Avg] FROM Invoice
+-- WHERE total &gt; (SELECT ROUND(AVG(Total),2) from Invoice 
+-- WHERE InvoiceDate &gt;= '2011-01-01' AND InvoiceDate &lt;='2012-12-31')
+-- 
+-- 
+-- SELECT  strftime('%Y',InvoiceDate) AS [Year],round(AVG(TOTAL),2) AS [Avg_Total] from Invoice
+-- GROUP BY  strftime('%Y',InvoiceDate)  
+-- 
+-- 
+-- SELECT C.FirstName,C.LastName,SUM(I.total) AS [Total_Sum]
+-- FROM 
+--     Customer C
+-- JOIN 
+--     Invoice I ON I.CustomerId = C.CustomerId
+-- WHERE 
+--     InvoiceDate &gt;= '2011-01-01' 
+--     AND InvoiceDate &lt;= '2012-12-31'
+-- GROUP BY C.FirstName, C.LastName
+-- HAVING 
+--     SUM(I.total) &gt; (
+--         SELECT ROUND(AVG(total), 2) AS [Avg Transaction Amount]
+--         FROM Invoice
+--         WHERE InvoiceDate &gt;= '2011-01-01'
+--         AND InvoiceDate &lt;= '2012-12-31'
+--     )
+-- ORDER BY C.FirstName,C.LastName;
+-- 
+-- 
+-- 
+-- SELECT
+-- e.FirstName,
+-- e.LastName,
+-- sum(i.total) AS [Total Sales],
+-- round(sum(i.total) *.15,2) AS [Commission Payout]
+-- FROM
+-- Invoice i
+-- INNER JOIN
+-- Customer c
+-- ON i.CustomerId = c.CustomerId
+-- INNER JOIN
+-- Employee e
+-- ON e.EmployeeId = c.SupportRepId
+-- WHERE
+-- InvoiceDate &gt;= '2011-01-01' AND InvoiceDate &lt;='2012-12-31'
+-- GROUP BY
+-- e.FirstName,
+-- e.LastName
+-- ORDER BY e.LastName
+-- 
+-- 
+-- 
+-- SELECT
+-- e.EmployeeId
+-- FROM
+-- Invoice i
+-- INNER JOIN
+-- Customer c
+-- ON i.CustomerId = c.CustomerId
+-- INNER JOIN Employee e ON e.EmployeeId = c.SupportRepId
+-- WHERE InvoiceDate &gt;= '2011-01-01' AND InvoiceDate &lt;='2012-12-31'
+-- GROUP BY e.EmployeeId
+-- ORDER BY round(sum(i.total) *.15,2) DESC
+-- LIMIT 1;
+
+
+-- SELECT CustomerId,FirstName,LastName from Customer
+-- where SupportRepId in (SELECT
+-- e.EmployeeId
+-- FROM
+-- Invoice i
+-- INNER JOIN
+-- Customer c
+-- ON i.CustomerId = c.CustomerId
+-- INNER JOIN Employee e ON e.EmployeeId = c.SupportRepId
+-- WHERE InvoiceDate &gt;= '2011-01-01' AND InvoiceDate &lt;='2012-12-31'
+-- GROUP BY e.EmployeeId
+-- ORDER BY round(sum(i.total) *.15,2) DESC
+-- LIMIT 1)
+
+
+
+-- SELECT C.CustomerId,C.FirstName,C.LastName,SUM(total) as [Total_Purchase] FROM  Customer c
+-- JOIN Invoice I on c.CustomerId = I.CustomerId
+-- GROUP by C.CustomerId,C.FirstName,C.LastName
+-- ORDER BY SUM(total) DESC
+-- LIMIT 1;
+
+
+-- SELECT
+-- *
+-- FROM
+-- Customer c
+-- WHERE
+-- c.LastName = 'Doeein'</sql><sql name="SQL 5"></sql><current_tab id="0"/></tab_sql></sqlb_project>
